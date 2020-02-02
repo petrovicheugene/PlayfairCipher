@@ -149,7 +149,6 @@ bool PlayfairCipher::createCipherMatrix(const QString &key, Language lang)
         cipherMatrix.append(row);
         workKey.remove(0, columnCount);
     }
-    qDebug() << cipherMatrix;
     return true;
 }
 //=========================================

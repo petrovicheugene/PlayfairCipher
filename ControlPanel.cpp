@@ -14,11 +14,17 @@ ControlPanel::ControlPanel(QWidget *parent) : QWidget(parent)
 {
     createComponents();
     createConnections();
+    buttonEnablingControl();
 }
 //=========================================
-void ControlPanel::showMsg(const QString& msg)
+void ControlPanel::showEncrypted(const QString &msg)
 {
-    outputTextEdit->setText(msg);
+    encryptedTextEdit->setText(msg);
+}
+//=========================================
+void ControlPanel::showDecrypted(const QString &msg)
+{
+    decryptedTextEdit->setText(msg);
 }
 //=========================================
 void ControlPanel::showError(const QString& msg)
@@ -39,25 +45,28 @@ void ControlPanel::createComponents()
     mainLayout->addWidget(keyLineEdit);
 
     label = new QLabel(this);
-    label->setText(createCaption(tr("Input:")));
+    label->setText(createCaption(tr("Original message:")));
     mainLayout->addWidget(label);
 
     inputTextEdit = new QTextEdit(this);
     mainLayout->addWidget(inputTextEdit);
 
     label = new QLabel(this);
-    label->setText(createCaption(tr("Output:")));
+    label->setText(createCaption(tr("Encrypted message:")));
     mainLayout->addWidget(label);
 
-    outputTextEdit = new QTextEdit(this);
-    mainLayout->addWidget(outputTextEdit);
+    encryptedTextEdit = new QTextEdit(this);
+    mainLayout->addWidget(encryptedTextEdit);
 
-    QDialogButtonBox* btnBox = new QDialogButtonBox(this);
+    label = new QLabel(this);
+    label->setText(createCaption(tr("Decrypted message:")));
+    mainLayout->addWidget(label);
+
+    decryptedTextEdit = new QTextEdit(this);
+    mainLayout->addWidget(decryptedTextEdit);
+
+    QDialogButtonBox *btnBox = new QDialogButtonBox(this);
     mainLayout->addWidget(btnBox);
-
-    swapBtn = new QPushButton(this);
-    swapBtn->setText(tr("Swap"));
-    btnBox->addButton(swapBtn, QDialogButtonBox::ActionRole);
 
     encryptBtn = new QPushButton(this);
     encryptBtn->setText(tr("Encrypt"));
@@ -71,13 +80,12 @@ void ControlPanel::createComponents()
 //=========================================
 void ControlPanel::createConnections()
 {
-    connect(swapBtn, &QPushButton::clicked,
-            this, &ControlPanel::swapIO);
-    connect(encryptBtn, &QPushButton::clicked,
-            this, &ControlPanel::initEncryption);
-    connect(decryptBtn, &QPushButton::clicked,
-            this, &ControlPanel::initDecryption);
+    connect(encryptBtn, &QPushButton::clicked, this, &ControlPanel::initEncryption);
+    connect(decryptBtn, &QPushButton::clicked, this, &ControlPanel::initDecryption);
 
+    connect(keyLineEdit, &QLineEdit::textChanged, this, &ControlPanel::buttonEnablingControl);
+    connect(inputTextEdit, &QTextEdit::textChanged, this, &ControlPanel::buttonEnablingControl);
+    connect(encryptedTextEdit, &QTextEdit::textChanged, this, &ControlPanel::buttonEnablingControl);
 }
 //=========================================
 QString ControlPanel::createCaption(const QString& caption)
@@ -87,7 +95,7 @@ QString ControlPanel::createCaption(const QString& caption)
 //=========================================
 void ControlPanel::swapIO()
 {
-    inputTextEdit->setText(outputTextEdit->toPlainText());
+    inputTextEdit->setText(encryptedTextEdit->toPlainText());
 }
 //=========================================
 void ControlPanel::initEncryption()
@@ -97,6 +105,14 @@ void ControlPanel::initEncryption()
 //=========================================
 void ControlPanel::initDecryption()
 {
-    emit decryptRequest(keyLineEdit->text(), inputTextEdit->toPlainText());
+    emit decryptRequest(keyLineEdit->text(), encryptedTextEdit->toPlainText());
+}
+//=========================================
+void ControlPanel::buttonEnablingControl()
+{
+    encryptBtn->setEnabled(!keyLineEdit->text().isEmpty()
+                           && !inputTextEdit->toPlainText().isEmpty());
+    decryptBtn->setEnabled(!keyLineEdit->text().isEmpty()
+                           && !encryptedTextEdit->toPlainText().isEmpty());
 }
 //=========================================

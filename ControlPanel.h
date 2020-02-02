@@ -21,7 +21,8 @@ signals:
 
 public slots:
 
-    void showMsg(const QString& msg);
+    void showEncrypted(const QString &msg);
+    void showDecrypted(const QString &msg);
     void showError(const QString& msg);
 
 private slots:
@@ -29,16 +30,16 @@ private slots:
     void swapIO();
     void initEncryption();
     void initDecryption();
+    void buttonEnablingControl();
 
 private:
-
     //VARS
     QLineEdit* keyLineEdit;
-    QTextEdit* outputTextEdit;
-    QTextEdit* inputTextEdit;
+    QTextEdit *inputTextEdit;
+    QTextEdit *encryptedTextEdit;
+    QTextEdit *decryptedTextEdit;
     QPushButton* encryptBtn;
     QPushButton* decryptBtn;
-    QPushButton* swapBtn;
     //FUNCS
     void createComponents();
     void createConnections();

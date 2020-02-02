@@ -38,11 +38,9 @@ void MainWindow::createConnections()
     connect(controlPanel, &ControlPanel::decryptRequest,
             playfairCipher, &PlayfairCipher::decrypt);
 
-    connect(playfairCipher, &PlayfairCipher::encrypted,
-            controlPanel, &ControlPanel::showMsg);
+    connect(playfairCipher, &PlayfairCipher::encrypted, controlPanel, &ControlPanel::showEncrypted);
 
-    connect(playfairCipher, &PlayfairCipher::decrypted,
-            controlPanel, &ControlPanel::showMsg);
+    connect(playfairCipher, &PlayfairCipher::decrypted, controlPanel, &ControlPanel::showDecrypted);
 
     connect(playfairCipher, &PlayfairCipher::errorMessage, controlPanel, &ControlPanel::showError);
 }
